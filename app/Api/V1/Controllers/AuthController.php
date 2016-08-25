@@ -33,13 +33,24 @@ class AuthController extends Controller
 
         try {
             if (! $token = JWTAuth::attempt($credentials)) {
-                return $this->response->errorUnauthorized();
+                return $this->response->errorUnauthorized()
+                        ->header('Access-Control-Allow-Origin', '*')
+                        ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+                        ->header('Access-Control-Allow-Headers', 'Authorization,X-CSRF-Token,x-csrf-token');
             }
         } catch (JWTException $e) {
-            return $this->response->error('could_not_create_token', 500);
+            return $this->response
+                        ->error('could_not_create_token', 500)
+                        ->header('Access-Control-Allow-Origin', '*')
+                        ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+                        ->header('Access-Control-Allow-Headers', 'Authorization,X-CSRF-Token,x-csrf-token'); 
         }
 
-        return response()->json(compact('token'));
+        return response()
+                ->json(compact('token'));
+                ->header('Access-Control-Allow-Origin', '*')
+                ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+                ->header('Access-Control-Allow-Headers', 'Authorization,X-CSRF-Token,x-csrf-token');
     }
 
     public function signup(Request $request)

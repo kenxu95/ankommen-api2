@@ -13,7 +13,7 @@ return [
     |
     */
     'signup_fields' => [
-        'name', 'email', 'password'
+        'firstname', 'lastname', 'username', 'email', 'password'
     ],
 
     /*
@@ -26,7 +26,9 @@ return [
     |
     */
     'signup_fields_rules' => [
-    	'name' => 'required',
+    	'firstname' => 'required',
+        'lastname' => 'required',
+        'username' => 'required',
     	'email' => 'required|email|unique:users',
     	'password' => 'required|min:6'
     ],
