@@ -154,7 +154,6 @@ return [
     */
 
     'middleware' => [
-
     ],
 
     /*

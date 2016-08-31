@@ -1,5 +1,5 @@
 <?php
-	
+
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
@@ -10,12 +10,11 @@ $api->version('v1', function ($api) {
 	$api->post('auth/reset', 'App\Api\V1\Controllers\AuthController@reset');
 
 	$api->group(['middleware' => 'api.auth'], function ($api) {		
-  	$api->resource('users', 'App\Api\V1\Controllers\UserController@index');
+    $api->get('user', 'App\Api\V1\Controllers\UserController@show');
+  	$api->put('user', 'App\Api\V1\Controllers\UserController@update');
+
+  	$api->get('locations', 'App\Api\V1\Controllers\LocationController@index');
+  	$api->post('locations', 'App\Api\V1\Controllers\LocationController@store');
+  	$api->delete('locations/{id}', 'App\Api\V1\Controllers\LocationController@destroy');
   });
-
-	// example of free route
-	$api->get('free', function() {
-		return \App\User::all();
-	});
-
 });

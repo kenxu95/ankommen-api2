@@ -11,24 +11,27 @@ use App\User;
 use Dingo\Api\Routing\Helpers;
 use App\Http\Controllers\Controller;
 
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
   use Helpers;
 
-  public function index() 
+  public function show() 
   {
-    //$currentUser = JWTAuth::parseToken()->authenticate();
-
-    $users = User::all();
-
-
-    return response()->json(array(
-        'error' => false,
-        'users' => $users->toArray()),
-        200
-      )->header('Access-Control-Allow-Origin', '*')
-       ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-       ->header('Access-Control-Allow-Headers', 'Authorization,X-CSRF-Token,x-csrf-token');
+    $currentUser = JWTAuth::parseToken()->authenticate();
+    return $currentUser;
   }
+
+  public function update(Request $request) 
+  {
+    $currentUser = JWTAuth::parseToken()->authenticate();
+
+    $currentUser->fill(($request->all()['user']));
+
+    if ($currentUser->save())
+      return $this->response->noContent();
+    else
+      return $this->response->error('could_not_update_user', 500);
+  } 
 }

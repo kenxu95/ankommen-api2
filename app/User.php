@@ -12,7 +12,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'firstname', 'lastname', 'username', 'email', 'password'
+        'name', 'email', 'password', 'description'
     ];
 
     /**
@@ -34,5 +34,9 @@ class User extends Authenticatable
         $this->attributes['password'] = \Hash::make($value);
     }
 
+
+    public function locations(){
+        return $this->hasMany('App\Location');
+    }
 
 }
