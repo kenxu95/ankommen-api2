@@ -13,6 +13,9 @@ $api->version('v1', function ($api) {
     $api->get('user', 'App\Api\V1\Controllers\UserController@show');
   	$api->put('user', 'App\Api\V1\Controllers\UserController@update');
 
+    $api->get('user/image', 'App\Api\V1\Controllers\UserController@imageShow');
+    $api->post('user/image', 'App\Api\V1\Controllers\UserController@imageStore');
+
   	$api->get('locations', 'App\Api\V1\Controllers\LocationController@index');
   	$api->post('locations', 'App\Api\V1\Controllers\LocationController@store');
   	$api->delete('locations/{id}', 'App\Api\V1\Controllers\LocationController@destroy');
