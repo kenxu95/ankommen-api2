@@ -43,7 +43,12 @@ class UserController extends Controller
     if ($currentUser->image) {
       $filePath = 'images/'.$currentUser->image->filename;
       if (file_exists($filePath)){
-        return response()->download($filePath, 'profilePicture.png');
+        // Convert image to dataURL and return
+        $type = pathinfo($filePath, PATHINFO_EXTENSION);
+        $data = file_get_contents($filePath);
+        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        return response()->json(array('img' => $base64))
+                         ->header('Cache-Control', 'public');
       }
     }
     return response()->json(array("exists" => false));
@@ -95,8 +100,9 @@ class UserController extends Controller
     }
 
     // Save the image model
+    $newName = basename(tempnam('', '')) . basename($_FILES['file']['name']); // Prevent name collisions
     $image = new Image;
-    $image->filename = $orgName;
+    $image->filename = $newName;
     if (! $currentUser->image()->save($image))
       return $this->response->error('could_not_save_image', 500);
 
@@ -104,11 +110,8 @@ class UserController extends Controller
     if (!is_dir('images'))
       mkdir('images');
 
-    if(! move_uploaded_file($tmpName, 'images/' . $orgName))
+    if(! move_uploaded_file($tmpName, 'images/' . $newName))
       return $this->response->error('could_not_save_image_file', 500);
-
-    Log::info(scandir('.'));
-    Log::info(scandir('images'));
 
     return $this->response->noContent(); // Successful
   }
