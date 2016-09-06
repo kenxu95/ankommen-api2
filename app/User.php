@@ -6,7 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    /**
+    /**x
      * The attributes that are mass assignable.
      *
      * @var array
@@ -35,12 +35,15 @@ class User extends Authenticatable
     }
 
 
-    public function locations(){
+    public function locations() {
         return $this->hasMany('App\Location');
     }
 
-    public function image(){
+    public function image() {
         return $this->hasOne('App\Image');
     }
 
+    public function userAssets() {
+        return $this->hasMany('App\UserAsset');
+    }
 }

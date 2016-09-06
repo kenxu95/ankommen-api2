@@ -12,7 +12,6 @@ use App\Image;
 use Dingo\Api\Routing\Helpers;
 use App\Http\Controllers\Controller;
 
-use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -37,7 +36,7 @@ class UserController extends Controller
   } 
 
 
-  public function imageShow(Request $request){
+  public function showImage(Request $request){
     $currentUser = JWTAuth::parseToken()->authenticate();
 
     if ($currentUser->image) {
@@ -54,7 +53,7 @@ class UserController extends Controller
     return response()->json(array("exists" => false));
   }
 
-  public function imageStore(Request $request)
+  public function storeImage(Request $request)
   {
     $currentUser = JWTAuth::parseToken()->authenticate();
 
