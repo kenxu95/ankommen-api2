@@ -18,5 +18,8 @@ class UserAsset extends Model
     return $this->belongsTo('App\Asset');
   }
 
+  public function timeranges() {
+    return $this->hasMany('App\TimeRange');
+  } 
 }
 

@@ -22,5 +22,6 @@ $api->version('v1', function ($api) {
 
     $api->get('assets', 'App\Api\V1\Controllers\AssetController@index');
     $api->put('assets/{id}', 'App\Api\V1\Controllers\AssetController@update'); 
+    $api->post('assets/{id}/timeranges', 'App\Api\V1\Controllers\AssetController@storeTimeRanges');
   });
 });

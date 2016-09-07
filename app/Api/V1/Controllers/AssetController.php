@@ -9,6 +9,7 @@ use App\Http\Requests;
 use JWTAuth;
 use App\Asset;
 use App\UserAsset;
+use App\TimeRange;
 use Dingo\Api\Routing\Helpers;
 use App\Http\Controllers\Controller;
 
@@ -47,21 +48,12 @@ class AssetController extends Controller
     ->header('Cache-Control', 'public');
   } 
 
-  public function update(Request $request, $id) {
+  public function update(Request $request, $id) 
+  {
     $currentUser = JWTAuth::parseToken()->authenticate();
-
-    // Retrieve the asset
-    $asset = \App\Asset::find($id);
-
+    $asset = \App\Asset::find($id); // Get the asset
     if (!$asset)
       throw new NotFoundHttpException;
-
-
-    // Log::info(\DB::table('user_assets')->get()); 
-    // Log::info($currentUser->userAssets);
-    // return $this->response->nocontent();
-      //Log::info($asset->userAssets);
-
 
     // Check if this user already has this asset
     if ($request->get('action') == 'add')
@@ -88,6 +80,47 @@ class AssetController extends Controller
     return $this->response->error('could_not_update_user_asset', 500);
   }
 
+
+  public function storeTimeRanges(Request $request, $id)
+  {
+    $currentUser = JWTAuth::parseToken()->authenticate();
+    $asset = \App\Asset::find($id); // Get the asset
+    if (!$asset)
+      throw new NotFoundHttpException;
+    $userAsset = $currentUser->userAssets()->where('name', $asset->name)->first();
+
+    Log::info($userAsset->timeRanges);
+    return $this->response->nocontent();
+
+    // Remove all previous time ranges
+    if (count($userAsset->timeRanges) > 0)
+    {
+      if (! $userAsset->timeRanges()->delete())
+      {
+        return $this->response->error('could_not_save_availability', 500);
+      }
+    }
+
+    // Add in all new time ranges
+    foreach ($request->all() as $dayData)
+    {
+      foreach($dayData['timeranges'] as $dayTimeRange)
+      {
+        $timeRange = new TimeRange;
+        $timeRange->weekday = $dayData['day'];
+        $timeRange->startHour = floor($dayTimeRange[0] / 2);
+        $timeRange->startMinutes = $dayTimeRange[0] % 2 == 0 ? 0 : 30;
+        $timeRange->endHour = floor($dayTimeRange[1] / 2);
+        $timeRange->endMinutes = $dayTimeRange[1] % 2 == 0 ? 0 : 30;
+
+        if (! $userAsset->timeRanges()->save($timeRange)){
+          return $this->response->error('could_not_save_time_range', 500);
+        }
+      }
+    }
+
+    return $this->response->nocontent();
+  }
 
 }
 
