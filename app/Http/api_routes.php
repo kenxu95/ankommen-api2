@@ -21,5 +21,6 @@ $api->version('v1', function ($api) {
   	$api->delete('locations/{id}', 'App\Api\V1\Controllers\LocationController@destroy');
 
     $api->get('assets', 'App\Api\V1\Controllers\AssetController@index');
+    $api->put('assets/{id}', 'App\Api\V1\Controllers\AssetController@update'); 
   });
 });

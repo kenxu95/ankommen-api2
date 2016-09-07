@@ -12,7 +12,6 @@ use Dingo\Api\Routing\Helpers;
 
 use App\Http\Controllers\Controller;
 
-use Illuminate\Support\Facades\Log;
 
 
 class LocationController extends Controller
