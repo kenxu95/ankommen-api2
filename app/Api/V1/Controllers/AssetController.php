@@ -80,6 +80,29 @@ class AssetController extends Controller
     return $this->response->error('could_not_update_user_asset', 500);
   }
 
+  // Convert backend time to frontend time
+  private function numFromTime($hour, $minutes){
+    return ($hour * 2) + ($minutes == 0 ? 0 : 1);
+  }
+
+  public function getTimeRanges($id){
+    $currentUser = JWTAuth::parseToken()->authenticate();
+    $asset = \App\Asset::find($id); // Get the asset
+    if (!$asset)
+      throw new NotFoundHttpException;
+    $userAsset = $currentUser->userAssets()->where('name', $asset->name)->first();
+
+    // Get all time ranges associated with User Asset
+    $timeRanges = [];
+    foreach ($userAsset->timeRanges as $dayTimeRange){
+      array_push($timeRanges, array(
+        'day' => $dayTimeRange->weekday,
+        'timeRange' => array($this->numFromTime($dayTimeRange->startHour, $dayTimeRange->startMinutes),
+                             $this->numFromTime($dayTimeRange->endHour, $dayTimeRange->endMinutes))
+      ));
+    }
+    return response()->json(array('dayTimeRanges' => $timeRanges));
+  }  
 
   public function storeTimeRanges(Request $request, $id)
   {
@@ -88,9 +111,6 @@ class AssetController extends Controller
     if (!$asset)
       throw new NotFoundHttpException;
     $userAsset = $currentUser->userAssets()->where('name', $asset->name)->first();
-
-    Log::info($userAsset->timeRanges);
-    return $this->response->nocontent();
 
     // Remove all previous time ranges
     if (count($userAsset->timeRanges) > 0)
@@ -102,23 +122,19 @@ class AssetController extends Controller
     }
 
     // Add in all new time ranges
-    foreach ($request->all() as $dayData)
+    foreach ($request->all() as $dayTimeRange)
     {
-      foreach($dayData['timeranges'] as $dayTimeRange)
-      {
-        $timeRange = new TimeRange;
-        $timeRange->weekday = $dayData['day'];
-        $timeRange->startHour = floor($dayTimeRange[0] / 2);
-        $timeRange->startMinutes = $dayTimeRange[0] % 2 == 0 ? 0 : 30;
-        $timeRange->endHour = floor($dayTimeRange[1] / 2);
-        $timeRange->endMinutes = $dayTimeRange[1] % 2 == 0 ? 0 : 30;
+      $timeRange = new TimeRange;
+      $timeRange->weekday = $dayTimeRange['day'];
+      $timeRange->startHour = floor($dayTimeRange['timeRange'][0] / 2);
+      $timeRange->startMinutes = $dayTimeRange['timeRange'][0] % 2 == 0 ? 0 : 30;
+      $timeRange->endHour = floor($dayTimeRange['timeRange'][1] / 2);
+      $timeRange->endMinutes = $dayTimeRange['timeRange'][1] % 2 == 0 ? 0 : 30;
 
-        if (! $userAsset->timeRanges()->save($timeRange)){
-          return $this->response->error('could_not_save_time_range', 500);
-        }
+      if (! $userAsset->timeRanges()->save($timeRange)){
+        return $this->response->error('could_not_save_time_range', 500);
       }
     }
-
     return $this->response->nocontent();
   }
 
