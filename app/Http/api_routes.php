@@ -21,8 +21,13 @@ $api->version('v1', function ($api) {
   	$api->delete('locations/{id}', 'App\Api\V1\Controllers\LocationController@destroy');
 
     $api->get('assets', 'App\Api\V1\Controllers\AssetController@index');
+    $api->get('assets/edit', 'App\Api\V1\Controllers\AssetController@indexEdit');
     $api->put('assets/{id}', 'App\Api\V1\Controllers\AssetController@update'); 
     $api->get('assets/{id}/timeranges', 'App\Api\V1\Controllers\AssetController@getTimeRanges');
     $api->post('assets/{id}/timeranges', 'App\Api\V1\Controllers\AssetController@storeTimeRanges');
+
+    $api->post('tasks', 'App\Api\V1\Controllers\TaskController@store');
+    $api->get('tasks/created', 'App\Api\V1\Controllers\TaskController@indexCreated');
+
   });
 });

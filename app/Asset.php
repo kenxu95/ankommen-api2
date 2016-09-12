@@ -13,4 +13,8 @@ class Asset extends Model
     public function userAssets() {
       return $this->hasMany('App\UserAsset');
     }
+
+    public function taskassets() {
+      return $this->hasMany('App\Taskasset');
+    }
 }

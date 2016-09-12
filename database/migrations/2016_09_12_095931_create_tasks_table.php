@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLocationsTable extends Migration
+class CreateTasksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,14 +12,14 @@ class CreateLocationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('locations', function (Blueprint $table) {
+        Schema::create('tasks', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->double('longitude');
-            $table->double('latitude');
-            $table->tinyInteger('radius');
+            $table->string('description');
+            $table->string('date');
+            $table->string('time');
+            $table->integer('duration'); // In minutes
             $table->integer('user_id')->unsigned()->nullable();
-            $table->integer('task_id')->unsigned()->nullable();
             $table->timestamps();
         });
     }
@@ -31,8 +31,6 @@ class CreateLocationsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('locations');
+        Schema::drop('tasks');
     }
 }
-
-

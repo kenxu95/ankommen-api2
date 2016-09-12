@@ -46,4 +46,8 @@ class User extends Authenticatable
     public function userAssets() {
         return $this->hasMany('App\UserAsset');
     }
+
+    public function createdTasks() {
+        return $this->hasMany('App\Task');
+    }
 }

@@ -13,14 +13,24 @@ use App\TimeRange;
 use Dingo\Api\Routing\Helpers;
 use App\Http\Controllers\Controller;
 
-use Illuminate\Support\Facades\Log;
 
 
 class AssetController extends Controller
 {
   use Helpers;
 
-  public function index() 
+  // Get all the assets
+  public function index()
+  {
+    $currentUser = JWTAuth::parseToken()->authenticate();
+
+    $allAssets = \DB::table('assets')->get();
+    return response()
+           ->json(array('allAssets' => $allAssets))
+           ->header('Cache-Control', 'public');
+  }
+
+  public function indexEdit() 
   {
     $currentUser = JWTAuth::parseToken()->authenticate();
 
@@ -63,7 +73,7 @@ class AssetController extends Controller
 
       // Attach to User and Asset
       if ($currentUser->userAssets()->save($userAsset) && 
-        $asset->userAssets()->save($userAsset)) // TODO: double save?
+        $asset->userAssets()->save($userAsset))
       { 
         return $this->response->nocontent();
       } 
