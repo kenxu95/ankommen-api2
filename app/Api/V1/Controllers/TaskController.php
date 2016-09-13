@@ -19,18 +19,6 @@ class TaskController extends Controller
 {
   use Helpers;
 
-  private function neededAssetsFromTask(Task $task)
-  {
-    $assets = [];
-    $needed = [];
-    foreach ($task->taskassets as $taskasset)
-    {
-      array_push($assets, $taskasset->asset);
-      array_push($needed, $taskasset->needed);
-    }
-    return array('assets' => $assets, 'needed' => $needed);
-  }
-
   public function indexCreated()
   {
     $currentUser = JWTAuth::parseToken()->authenticate();
@@ -39,7 +27,7 @@ class TaskController extends Controller
     foreach($currentUser->createdTasks as $createdTask){
       array_push($createdTasks, 
         array('task' => $createdTask,
-              'neededAssets' => $this->neededAssetsFromTask($createdTask),
+              'taskassets' => $createdTask->taskassets,
               'locations' => $createdTask->locations));
     }
     return response()->json($createdTasks);

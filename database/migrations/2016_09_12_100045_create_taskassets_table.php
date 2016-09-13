@@ -14,6 +14,7 @@ class CreateTaskassetsTable extends Migration
     {
         Schema::create('taskassets', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('name');
             $table->integer('needed');
             $table->integer('task_id')->unsigned()->nullable();
             $table->integer('asset_id')->unsigned()->nullable();

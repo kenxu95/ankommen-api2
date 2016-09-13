@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Taskasset extends Model
 {
     protected $fillable = [
-      'needed'
+      'name', 'needed'
     ];
 
     public function task(){
