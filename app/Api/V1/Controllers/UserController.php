@@ -17,12 +17,14 @@ class UserController extends Controller
 {
   use Helpers;
 
+  // Respond with the current user
   public function show() 
   {
     $currentUser = JWTAuth::parseToken()->authenticate();
     return $currentUser;
   }
 
+  // Update the user's information (name, )
   public function update(Request $request) 
   {
     $currentUser = JWTAuth::parseToken()->authenticate();
@@ -35,14 +37,14 @@ class UserController extends Controller
       return $this->response->error('could_not_update_user', 500);
   } 
 
-
+  // Respond with the user's image
   public function showImage(Request $request){
     $currentUser = JWTAuth::parseToken()->authenticate();
 
     if ($currentUser->image) {
       $filePath = 'images/'.$currentUser->image->filename;
       if (file_exists($filePath)){
-        // Convert image to dataURL and return
+        // Convert saved image to dataURL and return
         $type = pathinfo($filePath, PATHINFO_EXTENSION);
         $data = file_get_contents($filePath);
         $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
@@ -53,6 +55,7 @@ class UserController extends Controller
     return response()->json(array("exists" => false));
   }
 
+  // Store the image as the user's new image (discarding the previous one)
   public function storeImage(Request $request)
   {
     $currentUser = JWTAuth::parseToken()->authenticate();

@@ -18,11 +18,7 @@ class LocationController extends Controller
 {
     use Helpers;
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    // Responds with all the locations a user has
     public function index()
     {
         $currentUser = JWTAuth::parseToken()->authenticate();
@@ -33,37 +29,33 @@ class LocationController extends Controller
             ->toArray();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    // Save location
     public function store(Request $request)
     {
         $currentUser = JWTAuth::parseToken()->authenticate();
+
+        // Create new location
         $location = new Location;
         $location->fill($request->all()['location']);
 
+        // Save location
         if ($currentUser->locations()->save($location))
             return $this->response->noContent();
         else
             return $this->response->error('could_not_create_location', 500);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    // Remove location from the database
     public function destroy($id)
     {
         $currentUser = JWTAuth::parseToken()->authenticate();
+
+        // Find the location
         $location = $currentUser->locations()->find($id);
         if (!$location)
             throw new NotFoundHttpException;
 
+        // Delete the location
         if ($location->delete())
             return $this->response->noContent();
         else

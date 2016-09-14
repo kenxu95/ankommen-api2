@@ -19,6 +19,7 @@ class AuthController extends Controller
 {
     use Helpers;
 
+    // Validates a login request
     public function login(Request $request)
     {
         $credentials = $request->only(['email', 'password']);
@@ -43,6 +44,7 @@ class AuthController extends Controller
         return response()->json(compact('token'));
     }
 
+    // Saves the newly created user
     public function signup(Request $request)
     {
         $signupFields = Config::get('boilerplate.signup_fields');

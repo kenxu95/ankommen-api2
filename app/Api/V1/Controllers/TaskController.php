@@ -19,6 +19,8 @@ class TaskController extends Controller
 {
   use Helpers;
 
+  // Respond with all the tasks that the user created himself
+  // TODO: Check dates
   public function indexCreated()
   {
     $currentUser = JWTAuth::parseToken()->authenticate();
@@ -33,8 +35,7 @@ class TaskController extends Controller
     return response()->json($createdTasks);
   }
 
-
-
+  // Store the task
   public function store(Request $request)
   {
     $currentUser = JWTAuth::parseToken()->authenticate();
