@@ -19,6 +19,17 @@ class TaskController extends Controller
 {
   use Helpers;
 
+  // Return the associated array of assets from taskassets
+  private function getAssets(Task $task)
+  {
+    $assets = [];
+    foreach($task->taskassets as $taskasset)
+    {
+      array_push($assets, $taskasset->asset);
+    }
+    return $assets;
+  }
+
   // Respond with all the tasks that the user created himself
   // TODO: Check dates
   public function indexCreated()
@@ -29,7 +40,7 @@ class TaskController extends Controller
     foreach($currentUser->createdTasks as $createdTask){
       array_push($createdTasks, 
         array('task' => $createdTask,
-              'taskassets' => $createdTask->taskassets,
+              'assets' => $this->getAssets($createdTask),
               'locations' => $createdTask->locations));
     }
     return response()->json($createdTasks);
