@@ -26,6 +26,10 @@ class AssetController extends Controller
 
     $allAssets = \DB::table('assets')->get();
     return response()
+          ->json(array('hello' => 'lskdf'))
+          ->header('Cache-Control', 'public');
+
+    return response()
            ->json(array('allAssets' => $allAssets))
            ->header('Cache-Control', 'public');
   }

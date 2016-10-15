@@ -30,24 +30,54 @@ class TaskController extends Controller
     return $assets;
   }
 
+  // Return -1 if the task has already finished
+  // Return 0 if the task is currently happening
+  // Return 1 if the task will take place in the future
+  private function compareTime($task)
+  {
+    // $taskDate = DateTime::createFromFormat('d/m/Y', $task->date); 
+    // $currentDate = new DateTime();
+    return 1;
+
+  }
+
   // Respond with all the tasks that the user created himself
-  // TODO: Check dates
+  // TODO: Deal with tasks that are currently executing
   public function indexCreated()
   {
     $currentUser = JWTAuth::parseToken()->authenticate();
 
     $createdTasks = [];
     foreach($currentUser->createdTasks as $createdTask){
-      array_push($createdTasks, 
-        array('task' => $createdTask,
-              'assets' => $this->getAssets($createdTask),
-              'locations' => $createdTask->locations));
+      if ($this->compareTime($createdTask) > 0){
+        array_push($createdTasks, 
+          array('task' => $createdTask,
+           'assets' => $this->getAssets($createdTask),
+           'locations' => $createdTask->locations));
+      }
+    }
+    return response()->json($createdTasks);
+  }
+
+  // Respond with all the user-created tasks, which have already occured
+  public function indexPrevious()
+  {
+    $currentUser = JWTAuth::parseToken()->authenticate();
+    
+    $createdTasks = [];
+    foreach($currentUser->createdTasks as $createdTask){
+      if ($this->compareTime($createdTask) < 0){
+        array_push($createdTasks, 
+          array('task' => $createdTask,
+            'assets' => $this->getAssets($createdTask),
+            'locations' => $createdTask->locations));
+      }
     }
     return response()->json($createdTasks);
   }
 
   // Store the task
-  public function store(Request $request)
+  public function storeCreated(Request $request)
   {
     $currentUser = JWTAuth::parseToken()->authenticate();
 
@@ -70,7 +100,7 @@ class TaskController extends Controller
 
       // Save the Taskasset
       if (! $asset->taskassets()->save($taskasset) ||
-          ! $task->taskassets()->save($taskasset))
+        ! $task->taskassets()->save($taskasset))
         return $this->response->error('could_not_save_asset_reference');
     }
 

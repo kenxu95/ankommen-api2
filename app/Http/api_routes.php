@@ -32,8 +32,9 @@ $api->version('v1', function ($api) {
     $api->post('assets/{id}/timeranges', 'App\Api\V1\Controllers\AssetController@storeTimeRanges');
 
     // Tasks Controller
-    $api->post('tasks', 'App\Api\V1\Controllers\TaskController@store');
+    $api->post('tasks/created', 'App\Api\V1\Controllers\TaskController@storeCreated');
     $api->get('tasks/created', 'App\Api\V1\Controllers\TaskController@indexCreated');
+    $api->get('tasks/previous', 'App\Api\V1\Controllers\TaskController@indexPrevious');
 
   });
 });
